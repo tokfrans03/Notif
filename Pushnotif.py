@@ -14,7 +14,11 @@ def sendnotif(title, message, image=""):
     else:
         url = "https://api.pushmealert.com?user="+user+"&key="+key+"&title="+title+"&message="+message+"&image=" + image
 
-    requests.get(url)
+    res = json.loads(requests.get(url).text)
+    if res["status"] == 1:
+        return True
+    else:
+        return False
 
 class S(BaseHTTPRequestHandler):
     def send_res(self, args, code=200, Success=True):
@@ -74,10 +78,13 @@ class S(BaseHTTPRequestHandler):
             try:
                 body = json.loads(body)
                 if "imgurl" in body:
-                    sendnotif(body["title"], body["message"], image=body["imgurl"])
+                    res = sendnotif(body["title"], body["message"], image=body["imgurl"])
                 else:
-                    sendnotif(body["title"], body["message"])
-                self.send_res("Done")
+                    res = sendnotif(body["title"], body["message"])
+                if res:
+                    self.send_res("Sent!")
+                else:
+                    self.send_res("Something went wrong, did you include a Title and a message?", Success=False, code=201)
                 return
 
             except:
