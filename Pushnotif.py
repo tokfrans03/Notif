@@ -3,11 +3,11 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 import requests
 import urllib
+from creds import *
 
 port = 8000
 
 def sendnotif(title, message, image=""):
-    from creds import *
     
     if image == "":
         url = "https://api.pushmealert.com?user="+user+"&key="+key+"&title="+title+"&message="+message
